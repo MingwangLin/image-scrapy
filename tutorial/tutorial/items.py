@@ -22,3 +22,7 @@ class StandingItem(scrapy.Item):
 class BooruItem(scrapy.Item):
     images = scrapy.Field()
     image_urls = scrapy.Field()
+
+class MangaItem(scrapy.Item):
+    images = scrapy.Field()
+    image_urls = scrapy.Field()

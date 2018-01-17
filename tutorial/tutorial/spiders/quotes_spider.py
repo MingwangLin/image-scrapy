@@ -1,7 +1,7 @@
 import scrapy
 import time
 from scrapy.selector import Selector
-from ..items import StandingItem, BooruItem
+from ..items import StandingItem, BooruItem, MangaItem
 
 
 class StandingsSpider(scrapy.Spider):
@@ -89,22 +89,20 @@ class BooruSpider(scrapy.Spider):
 
 class MangaSpider(scrapy.Spider):
     name = "manga"
-    start_urls = ['https://safebooru.org/index.php?page=post&s=list&tags=+1girl+white_background&pid=0']
+    start_urls = ['']
 
     def parse(self, response):
-        url_lst = response.css("a[href*='&id']::attr(href)").extract()
+        url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
         # print('urllst----------------------------', url_lst)
         for url in url_lst:
             url = response.urljoin(url)
-            yield scrapy.Request(url=url, callback=self.get_standings)
-        next_page_url = response.css("a[alt='next']::attr(href)").extract_first()
-        if next_page_url is not None:
-            yield scrapy.Request(response.urljoin(next_page_url))
+            yield scrapy.Request(url=url, callback=self.get_manga)
 
-    def get_standings(self, response):
-        standing = BooruItem()
-        relative_img_url = response.css("img[alt*='1girl']::attr(src)").extract_first()
+
+    def get_manga(self, response):
+        manga = MangaItem()
+        relative_img_url = response.css("img[src*='galleries']::attr(src)").extract_first()
         absolute_img_url = response.urljoin(relative_img_url)
         # print('-----------------------img------------', absolute_img_urls)
-        standing["image_urls"] = [absolute_img_url]
-        yield standing
+        manga["image_urls"] = [absolute_img_url]
+        yield manga
