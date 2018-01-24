@@ -117,7 +117,7 @@ class FullcolorMangaCollectionSpider(scrapy.Spider):
         for url in url_lst:
             url = response.urljoin(url)
             yield scrapy.Request(url=url, callback=self.parse_single_manga)
-        next_page_url = response.css("a[class='next']::attr(href)").extract_first()
+        next_page_url = response.css("a[class*='next']::attr(href)").extract_first()
         if next_page_url is not None:
             yield scrapy.Request(response.urljoin(next_page_url))
 
@@ -151,7 +151,7 @@ class BwMangaCollectionSpider(scrapy.Spider):
         for url in url_lst:
             url = response.urljoin(url)
             yield scrapy.Request(url=url, callback=self.parse_single_manga)
-        next_page_url = response.css("a[class='next']::attr(href)").extract_first()
+        next_page_url = response.css("a[class*='next']::attr(href)").extract_first()
         if next_page_url is not None:
             yield scrapy.Request(response.urljoin(next_page_url))
 
@@ -160,9 +160,9 @@ class BwMangaCollectionSpider(scrapy.Spider):
         if manga_type == []:
             url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
             page_num = len(url_lst)
-            tmp = page_num // 2
+            tmp = page_num // 4
             page_start = tmp
-            page_end = -6
+            page_end = -4
             url_lst = url_lst[page_start:page_end]
             # print('urllst----------------------------', url_lst)
             for url in url_lst:
