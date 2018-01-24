@@ -122,8 +122,8 @@ class FullcolorMangaCollectionSpider(scrapy.Spider):
             yield scrapy.Request(response.urljoin(next_page_url))
 
     def parse_single_manga(self, response):
-        manga_type = response.css("a[href='/tag/full-color/')::attr(href)").extract()
-        if manga_type is not None:
+        manga_type = response.css("a[href='/tag/full-color/']::attr(href)").extract()
+        if manga_type != []:
             url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
             page_start = 4
             page_end = -4
@@ -160,9 +160,9 @@ class BwMangaCollectionSpider(scrapy.Spider):
         if manga_type == []:
             url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
             page_num = len(url_lst)
-            tmp = page_num // 3
+            tmp = page_num // 2
             page_start = tmp
-            page_end = page_num - tmp
+            page_end = -4
             url_lst = url_lst[page_start:page_end]
             # print('urllst----------------------------', url_lst)
             for url in url_lst:
