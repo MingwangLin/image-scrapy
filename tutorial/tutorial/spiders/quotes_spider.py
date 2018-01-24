@@ -157,7 +157,7 @@ class BwMangaCollectionSpider(scrapy.Spider):
 
     def parse_single_manga(self, response):
         manga_type = response.css("a[href*='/tag/full-color/']::attr(href)").extract()
-        if manga_type is None:
+        if manga_type == []:
             url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
             page_num = len(url_lst)
             tmp = page_num // 4
