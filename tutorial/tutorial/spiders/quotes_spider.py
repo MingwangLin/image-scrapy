@@ -6,7 +6,7 @@ from ..items import StandingItem, BooruItem, MangaItem
 
 class StandingsSpider(scrapy.Spider):
     name = "standings"
-    start_urls = ['http://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/sql_for_erogamer_form.php']
+    start_urls = ['']
 
     def parse(self, response):
 
@@ -98,8 +98,78 @@ class MangaSpider(scrapy.Spider):
             url = response.urljoin(url)
             yield scrapy.Request(url=url, callback=self.get_manga)
 
-
     def get_manga(self, response):
+        manga = MangaItem()
+        relative_img_url = response.css("img[src*='galleries']::attr(src)").extract_first()
+        absolute_img_url = response.urljoin(relative_img_url)
+        # print('-----------------------img------------', absolute_img_urls)
+        manga["image_urls"] = [absolute_img_url]
+        yield manga
+
+
+class FullcolorMangaCollectionSpider(scrapy.Spider):
+    name = "fullcolor_manga_collection"
+    start_urls = ['']
+
+    def parse_whole_page(self, response):
+        url_lst = response.css("a[href*='/g/']::attr(href)").extract()
+        # print('urllst----------------------------', url_lst)
+        for url in url_lst:
+            url = response.urljoin(url)
+            yield scrapy.Request(url=url, callback=self.parse_single_manga)
+        next_page_url = response.css("a[class='next']::attr(href)").extract_first()
+        if next_page_url is not None:
+            yield scrapy.Request(response.urljoin(next_page_url))
+
+    def parse_single_manga(self, response):
+        manga_type = response.css("a[href='/tag/full-color/')::attr(href)").extract()
+        if manga_type is not None:
+            url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
+            page_start = 4
+            page_end = -4
+            url_lst = url_lst[page_start:page_end]
+            # print('urllst----------------------------', url_lst)
+            for url in url_lst:
+                url = response.urljoin(url)
+                yield scrapy.Request(url=url, callback=self.get_manga_image)
+
+    def get_manga_image(self, response):
+        manga = MangaItem()
+        relative_img_url = response.css("img[src*='galleries']::attr(src)").extract_first()
+        absolute_img_url = response.urljoin(relative_img_url)
+        # print('-----------------------img------------', absolute_img_urls)
+        manga["image_urls"] = [absolute_img_url]
+        yield manga
+
+class BwMangaCollectionSpider(scrapy.Spider):
+    name = "bw_manga_collection"
+    start_urls = ['']
+
+    def parse_whole_page(self, response):
+        url_lst = response.css("a[href*='/g/']::attr(href)").extract()
+        # print('urllst----------------------------', url_lst)
+        for url in url_lst:
+            url = response.urljoin(url)
+            yield scrapy.Request(url=url, callback=self.parse_single_manga)
+        next_page_url = response.css("a[class='next']::attr(href)").extract_first()
+        if next_page_url is not None:
+            yield scrapy.Request(response.urljoin(next_page_url))
+
+    def parse_single_manga(self, response):
+        manga_type = response.css("a[href*='/tag/full-color/')::attr(href)").extract()
+        if manga_type is None:
+            url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
+            page_num = len(url_lst)
+            tmp = page_num // 4
+            page_start = tmp
+            page_end = page_num - tmp
+            url_lst = url_lst[page_start:page_end]
+            # print('urllst----------------------------', url_lst)
+            for url in url_lst:
+                url = response.urljoin(url)
+                yield scrapy.Request(url=url, callback=self.get_manga_image)
+
+    def get_manga_image(self, response):
         manga = MangaItem()
         relative_img_url = response.css("img[src*='galleries']::attr(src)").extract_first()
         absolute_img_url = response.urljoin(relative_img_url)
