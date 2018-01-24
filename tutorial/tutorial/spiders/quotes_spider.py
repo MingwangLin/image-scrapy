@@ -160,9 +160,9 @@ class BwMangaCollectionSpider(scrapy.Spider):
         if manga_type == []:
             url_lst = response.css("a[class='gallerythumb']::attr(href)").extract()
             page_num = len(url_lst)
-            tmp = page_num // 2
+            tmp = page_num // 3
             page_start = tmp
-            page_end = -10
+            page_end = -4
             url_lst = url_lst[page_start:page_end]
             # print('urllst----------------------------', url_lst)
             for url in url_lst:
