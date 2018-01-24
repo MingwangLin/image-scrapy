@@ -111,7 +111,7 @@ class FullcolorMangaCollectionSpider(scrapy.Spider):
     name = "fullcolor_manga_collection"
     start_urls = ['']
 
-    def parse_whole_page(self, response):
+    def parse(self, response):
         url_lst = response.css("a[href*='/g/']::attr(href)").extract()
         # print('urllst----------------------------', url_lst)
         for url in url_lst:
@@ -145,7 +145,7 @@ class BwMangaCollectionSpider(scrapy.Spider):
     name = "bw_manga_collection"
     start_urls = ['']
 
-    def parse_whole_page(self, response):
+    def parse(self, response):
         url_lst = response.css("a[href*='/g/']::attr(href)").extract()
         # print('urllst----------------------------', url_lst)
         for url in url_lst:
