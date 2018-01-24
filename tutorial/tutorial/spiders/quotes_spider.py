@@ -162,7 +162,7 @@ class BwMangaCollectionSpider(scrapy.Spider):
             page_num = len(url_lst)
             tmp = page_num // 2
             page_start = tmp
-            page_end = -4
+            page_end = -5
             url_lst = url_lst[page_start:page_end]
             # print('urllst----------------------------', url_lst)
             for url in url_lst:
