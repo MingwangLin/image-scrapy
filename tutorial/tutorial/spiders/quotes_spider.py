@@ -117,9 +117,13 @@ class FullcolorMangaCollectionSpider(scrapy.Spider):
         for url in url_lst:
             url = response.urljoin(url)
             yield scrapy.Request(url=url, callback=self.parse_single_manga)
-        next_page_url = response.css("a[class*='next']::attr(href)").extract_first()
-        if next_page_url is not None:
-            yield scrapy.Request(response.urljoin(next_page_url))
+        page_max = 10
+        page_count = 1
+        while page_count <= page_max:
+            page_count += 1
+            next_page_url = 'https://nhentai.net/tag/full-color/popular?page={}'.format(page_count)
+            print(next_page_url, 'next_page_url')
+            yield scrapy.Request(url=next_page_url, callback=self.parse)
 
     def parse_single_manga(self, response):
         manga_type = response.css("a[href='/tag/full-color/']::attr(href)").extract()
